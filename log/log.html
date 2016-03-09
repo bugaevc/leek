@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta charset="utf-8">
+<title>Leek log</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!--[if lt IE 9]>
+<script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.2/html5shiv.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/respond.js/1.4.2/respond.min.js"></script>
+<![endif]-->
+<link rel="stylesheet" href="styles.css">
+<link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.28/angular.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.28/angular-animate.js"></script>
+
+<script src="log.js"></script>
+<link rel="shortcut icon" href="">
+</head>
+<body ng-app="LeekLogApp" ng-controller="rootCtrl">
+    <p class="root-link">Leek running at <a ng-href="{{root_url}}">{{root_url}}</a></p>
+    <hr/>
+    <table class="requests" ng-controller="requestsCtrl">
+        <tr ng-repeat="request in requests" ng-class="{detailed: request.detailsShown}">
+            <td class="path"><a ng-href="{{root_url}}{{request.path}}" target="_blank">{{request.path}}</a></td>
+            <!--<td class="path">{{request.path}}</td>-->
+            <td class="range" ng-show="request.headers.hasOwnProperty('Range')">
+                <span class="key">Range:</span> <span class="value">{{request.headers['Range']}}</span>
+            </td>
+            <td class="time">{{request.time}}</td>
+            <td class="address">{{request.address}}</td>
+            <td class="code">{{request.response.code}}</td>
+            <td class="short">{{request.response.short}}</td>
+            <td class="bytes">{{request.bytes_send | bytes}}</td>
+            <td class="status" ng-class="request.status.replace(' ', '_') | lowercase">
+                {{request.status}}
+            </td>
+            <td class="show_details" ng-click="request.detailsShown = !request.detailsShown">
+                <i class="fa" ng-class="request.detailsShown?'fa-angle-up':'fa-angle-down'"></i>
+            </td>
+            <td class="requestline" ng-show="request.detailsShown">
+                {{request.requestline}}
+            </td>
+            <td class="headers" ng-show="request.detailsShown">
+                <ul>
+                    <li ng-repeat="(key, value) in request.headers">
+                        <span class="key">{{key}}:</span> <span class="value">{{value}}</value>
+                    </li>
+                </ul>
+            </td>
+        </tr>
+    </table>
+    <hr/>
+</body>
+</html>
