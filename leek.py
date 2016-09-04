@@ -289,23 +289,28 @@ class LeekRequestHandler(SimpleHTTPRequestHandler):
                 type='parent folder',
         )
         for file in files:
-            if not file.is_dir():
-                name = file.stem
-                ext = file.suffix
-                ctype = self.guess_type(str(file))
-            else:
-                name = file.name
-                ext = '/'
-                ctype = 'folder'
+            try:
+                if not file.is_dir():
+                    name = file.stem
+                    ext = file.suffix
+                    ctype = self.guess_type(str(file))
+                else:
+                    name = file.name
+                    ext = '/'
+                    ctype = 'folder'
 
-            link = urllib.parse.quote(name + ext, errors='surrogatepass')
-            size_str = self.format_size(self.get_path_size(file))
-            last_modified = file.lstat().st_mtime
-            year, month, day, hh, mm, ss, x, y, z = time.gmtime(last_modified)
-            date_str = "{} {:.3} {} {:02}:{:02}:{:02}".format(
-                day, self.monthname[month], year, hh, mm, ss)
-            if file.is_symlink():
-                ext += '@'
+                link = urllib.parse.quote(name + ext, errors='surrogatepass')
+                size_str = self.format_size(self.get_path_size(file))
+                last_modified = file.lstat().st_mtime
+                year, month, day, hh, mm, ss, x, y, z = time.gmtime(last_modified)
+                date_str = "{} {:.3} {} {:02}:{:02}:{:02}".format(
+                    day, self.monthname[month], year, hh, mm, ss)
+                if file.is_symlink():
+                    ext += '@'
+            except OSError:
+                # oops, something went wrong while we were inspecting the files
+                # e.g. the file was deleted while we were observing it
+                continue
 
             r.add_line(
                 link=link,
