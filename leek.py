@@ -156,12 +156,13 @@ class LeekRequestHandler(SimpleHTTPRequestHandler):
         """
         path = pathlib.Path(self.translate_path(path))
         if path.is_dir():
+            # addressing scheme, network location, path, query, fragment identifier
             parts = urllib.parse.urlsplit(self.path)
             if not parts[2].endswith('/'):
                 self.send_response(301)
                 parts = list(parts)
                 parts[2] += '/'
-                self.send_header("Location", urllib.parse.urlunparse(parts))
+                self.send_header("Location", urllib.parse.urlunsplit(parts))
                 self.end_headers()
                 return None
             for index in "index.html", "index.htm":
